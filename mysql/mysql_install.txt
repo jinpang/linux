@@ -1,0 +1,26 @@
+1.下载安装mysql客户端及服务端:
+# yum -y install mysql mysql-server
+
+2.修改Mysql数据库用户root的密码
+#mysqladmin -u root password your_new_password
+
+3. 启动Linux mysql服务
+$ /etc/init.d/mysqld start
+
+
+4.grant命令创建远程连接Mysql授权用户,用户从任何其它主机发起的访问（通配符％）
+GRANT ALL PRIVILEGES ON *.* TO username@'%' IDENTIFIED BY 'password' WITH GRANT OPTION;
+
+
+5.开机自动启动Mysql 服务
+#chkconfig --level 2345 mysql on
+
+6.打开防火墙3306端口
+vi /etc/sysconfig/iptables
+添加-A INPUT -m state –state NEW -m tcp -p tcp –dport 3306 -j ACCEPT
+（注意添加在-A RH-Firewall-1-INPUT -j REJECT –reject-with icmp-host-prohibited之前，否则可能导致规则不生效）
+启动防火墙
+#service iptables restart
+
+
+
