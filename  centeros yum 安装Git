@@ -1,0 +1,19 @@
+If you haven’t set up the Webtatic repository in yum, then add it in the command-line as following:
+
+rpm -Uvh http://repo.webtatic.com/yum/centos/5/latest.rpm
+
+
+Now install git:
+
+yum install --enablerepo=webtatic git-all
+
+
+git 的几个命令解释
+
+git-init-db                // 新建初始化库
+git add *.c *.h                // 添加文件
+git commit –a –m ‘inital’     // 提交修改,-a 表示全部
+git branch third // 新建一个名为third的分支
+git reset –hard commit   // commit 为指定版本，同时所有在commit版本之后的修改全部废弃，无法返回
+git reset –soft commit    // commit 为指定版本，代码不变commit信息没有了
+git checkout testing    // 切换到testing分支
