@@ -1,0 +1,48 @@
+samba安装
+1、# yum -y install samba
+使用yum命令安装samba，加入-y参数，如遇询问自动选择y，全自动下载并安装samba，此过程需要一点时间。
+
+2、# rpm -qa | grep samba
+检查samba服务包的安装情况，会显示类似如下两个包：
+samba-common-3.6.9-151.el6.i686      //服务器和客户端均需要的文件
+samba-3.6.9-151.el6.i686             //服务器端文件
+
+3、# whereis samba
+由于是yum安装，可以用此命令查看samba安装位置，得到类似如下内容：
+samba: /etc/samba /usr/lib/samba /usr/share/man/man7/samba.7.gz
+
+4、# vi /etc/samba/smb.conf
+根据步骤3得知smb.conf的位置，配置samba：
+（1）[global]       找到全局设置标签，在下面进行配置
+workgroup = MYGROUP      找到此行，改为workgroup = WORKGROUP，这里以 Windows XP 默认的“WORKGROUP”为例
+; hosts allow = 192.168.1. 192.168.2. 127.      找到此行，去掉行首的“;”，并制定访问限制改为hosts allow = 192.168.0. 127.，指定内网IP地址及本地，只允许这两种情况的访问
+（2）配置最简单访问目录几个基本属性：
+[share]      windows客户端查看时看到的文件夹名
+path = /var/samba/share      共享目录位置，要系统中存在的目录，也可以配置完再创建
+read only = no
+public   = yes
+
+5、给配置的共享目录设置权限：
+# mkdir /var/samba/share      如刚才配置的共享目录不存在则创建
+# chown -R nobody. /var/samba/share      设置共享目录归属为 nobody
+# chmod 777 /var/samba/share      将共享目录属性设置为 777
+
+6、# smbpasswd -a username      将linux系统已存在用户 username（例）加入到 Samba 用户数据库，windows访问samba共享目录时需要输入此用户名和密码
+New SMB password:      在此输入密码
+Retype new SMB password:      重复密码
+
+7、# service smb start  //启动samba
+   # service smb stop  //停止samba
+   # service smb restart //重启samba
+
+8、# chkconfig smb on //开机启动samba
+
+9、# service iptables stop //关闭防火墙
+
+注意事项：
+可以登录samba服务器，但是没有权限访问linux下的共享目录
+1、确保linux下防火墙关闭或者是开放共享目录权限  iptalbes -F
+2、确保samba服务器配置文件smb.conf设置没有问题，可网上查阅资料看配置办法
+3、确保setlinux关闭，可以用setenforce 0命令执行。（本人在这里中招，所以小心）
+默认的，SELinux禁止网络上对Samba服务器上的共享目录进行写操作，即使你在smb.conf中允许了这项操作。
+
