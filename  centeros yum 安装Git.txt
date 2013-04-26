@@ -33,6 +33,7 @@ yum install gettext-devel
 //安装autoconf
 yum install autoconf
 
+
 //安装git
 wget http://www.codemonkey.org.uk/projects/git-snapshots/git/git-latest.tar.gz
 tar xzvf git-latest.tar.gz
@@ -41,3 +42,8 @@ autoconf
 ./configure --with-curl=/usr/local
 make 
 make install 
+
+
+//添加公钥：
+eval `ssh-agent`
+ssh-add /c/id_rsa
