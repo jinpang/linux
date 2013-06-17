@@ -90,3 +90,46 @@ SVN服务已经启动，使用客户端测试连接。
 
 
 come from http://www.cnblogs.com/zhoulf/
+
+
+
+[Linux]svn服务的安装和启动设置
+在CentOS系统下，使用以下命令进行SVN服务的安装
+
+[plain] view plaincopy
+yum -y install subversion  
+
+安装完毕后，svnserve服务就被添加到了系统的自动启动进程里面，但是尚未开启，所以依然无法随系统自动启动服务。为了安全起见，我们需要修改SVN服务端口，及自定义版本库所在目录。所以需要对以下文件进行相应的修改。
+[plain] view plaincopy
+vi /etc/rc.d/init.d/svnserve  
+
+找到以下内容
+[plain] view plaincopy
+pidfile=${PIDFILE-/var/run/svnserve.pid}  
+lockfile=${LOCKFILE-/var/lock/subsys/svnserve}  
+args="--daemon --pid-file=${pidfile} $OPTIONS"  
+
+修改为
+[plain] view plaincopy
+pidfile=${PIDFILE-/var/run/svnserve.pid}  
+lockfile=${LOCKFILE-/var/lock/subsys/svnserve}  
+logfile=/var/log/svnserve.log  
+args="--daemon --root /storage/repos --listen-port 621 --pid-file=${pidfile} --log-file=${logfile} $OPTIONS"  
+--root 是版本库所在的目录
+--listen-port 是SVN服务端口号
+
+--log-file 是SVN日志文件
+
+
+修改完成后使用以下命令将自动跟随系统启动功能进行激活
+
+[plain] view plaincopy
+chkconfig svnserve on  
+
+也可以使用以下方式进行手工操作
+[plain] view plaincopy
+service svnserve start     启动服务  
+service svnserve stop     停止服务  
+service svnserve restart  重启服务
+
+come from http://blog.csdn.net/yagas/article/details/6742082
