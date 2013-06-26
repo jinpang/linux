@@ -1,0 +1,86 @@
+1.下载安装mysql客户端及服务端:
+# yum -y install mysql mysql-server
+
+MySQL默认字符编码的设置
+MySQL的默认编码是Latin1，不支持中文，那么如何修改MySQL的默认编码呢，下面以UTF-8为例来说明
+ 需要注意的是，要修改的地方非常多，相应的修改方法也很多。下面是一种最简单最彻底的方法：
+ 一、Windows
+ 1、中止MySQL服务
+ 2、在MySQL的安装目录下找到my.ini，如果没有就把my-medium.ini复制为一个my.ini即可
+ 3、打开my.ini以后，在[client]和[mysqld]下面均加上default-character-set=utf8，保存并关闭
+ 4、启动MySQL服务
+ 二、Linux
+ 1、中止MySQL服务（bin/mysqladmin -u root shutdown）
+ 2、在/etc/下找到my.cnf，如果没有就把MySQL的安装目录下的support-files目录下的my-medium.cnf复制到/etc/下并改名为my.cnf即可
+ 3、打开my.cnf以后，在[client]和[mysqld]下面均加上default-character-set=utf8，保存并关闭
+ 4、启动MySQL服务（bin/mysqld_safe &）
+ 非常简单，这样的修改一劳永逸，今后MySQL一切相关的默认编码均为UTF-8了，创建新表格的时候无需再次设置
+ 需要注意的是，当前数据库中已经存在的数据仍保留现有的编码方式，因此需要自行转码，方法在网上有很多，不再赘述
+
+2. 启动Linux mysql服务
+# /etc/init.d/mysqld start
+
+3. 添加mysqld为服务
+# chkconfig --add mysqld
+
+4. 开机自动启动Mysql 服务
+#chkconfig --level 2345 mysqld on
+
+5. 修改Mysql数据库用户root的密码
+# mysqladmin -u root password your_new_password
+
+
+6. grant命令创建远程连接Mysql授权用户,用户从任何其它主机发起的访问（通配符％）
+GRANT ALL PRIVILEGES ON *.* TO username@'%' IDENTIFIED BY 'password' WITH GRANT OPTION;
+
+
+7. 打开防火墙3306端口
+vi /etc/sysconfig/iptables
+添加-A INPUT -p tcp -m state --state NEW -m tcp --dport 3306 -j ACCEPT
+（注意添加在-A RH-Firewall-1-INPUT -j REJECT –reject-with icmp-host-prohibited之前，否则可能导致规则不生效）
+启动防火墙
+#service iptables restart
+
+8. #打开防火墙命令操作
+#iptables -I INPUT 1 -p tcp -m state --state NEW -m tcp --dport 3306 -j ACCEPT
+#service iptables save
+
+9.备份数据库
+mysqldump -uroot -proot database_name > test.sql
+
+10.创建数据库platform
+mysql -uroot -proot
+create database platform;
+
+11. 数据库恢复
+mysql -uusername -ppassword database_name< test.sql
+
+
+12.bg %jobnumber%(把程序放到后台运行),fg %jobnumber%（把后台程序提到前台运行）,jobs（列出当前在后台运行的程序）, ctrl+z（挂起当前程序）。
+
+13.把程序放在后台运行：nohup ./应用名称 &
+
+14. 修改某目录及文件的读写执行权限
+ chmod 777 -R dir(目录可能有子目录，-R为是递归)
+
+15.Linux centos关机与重启命令详解与实战
+
+　Linux centos重启命令：
+
+    　　1、reboot
+    　　2、shutdown -r now 立刻重启(root用户使用)
+    　　3、shutdown -r 10 过10分钟自动重启(root用户使用)
+    　　4、shutdown -r 20:35 在时间为20:35时候重启(root用户使用)
+
+　　如果是通过shutdown命令设置重启的话，可以用shutdown -c命令取消重启
+
+　Linux centos关机命令：
+
+    　　1、halt 立刻关机
+    　　2、poweroff 立刻关机
+    　　3、shutdown -h now 立刻关机(root用户使用)
+    　　4、shutdown -h 10 10分钟后自动关机
+
+　　如果是通过shutdown命令设置关机的话，可以用shutdown -c命令取消重启
+
+16、grep -Rn "test" ./   在当前目录下查找所有包含"test"字符串的文件
